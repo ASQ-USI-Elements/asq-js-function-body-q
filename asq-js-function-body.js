@@ -1,7 +1,7 @@
 (function() {
   var p = {
 
-    getSubmission: function() {
+    submit: function() {
       if ( this.role !== this.Roles.VIEWER ) {
         return;
       }
