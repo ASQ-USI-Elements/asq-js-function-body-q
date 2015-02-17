@@ -1,8 +1,10 @@
 (function() {
   var p = {
 
+    isASQQuestionTypeElement : true,
+
     submit: function() {
-      if ( this.role !== this.Roles.VIEWER ) {
+      if ( this.role !== this.roles.VIEWER ) {
         return;
       }
 
@@ -34,9 +36,7 @@
     } 
   };
 
-  ASQ.mixin2(p, ASQ.ElementTypeMixin);
-  ASQ.mixin2(p, ASQ.RoleMixin);
-  ASQ.mixin2(p, ASQ.QuestionTypeMixin);
+  ASQ.asqify(p, true);
   Polymer('asq-js-function-body', p);
   
 })();
