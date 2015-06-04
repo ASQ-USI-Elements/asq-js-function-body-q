@@ -94,6 +94,46 @@ A major feature is that it will evaluate the code instantly and show the result.
 
         },
 
+        created: function(){
+          document.addEventListener('asq-ready', function(evt){
+            try {
+              this.subscribeToEvents(evt.detail.asqEventBus)
+            } catch(err){
+              console.debug('failed to subscribeToEvents');
+            }
+          }.bind(this));
+        },
+
+        onQuestionType: function(evt){
+          if(!evt || ! evt.questionType) return;
+
+          if(evt.questionType == 'asq-js-function-body'){
+            if(evt.type == "restorePresenter"){
+              if(this.role !== this.roles.PRESENTER) return;
+              this.onRestorePresenter(evt);
+            }
+            else if(evt.type == "restoreViewer"){
+              if(this.role !== this.roles.VIEWER) return;
+              this.onRestoreViewer(evt);
+            }
+          }
+        },
+
+        onRestorePresenter: function(evt){
+
+        },
+
+        onRestoreViewer: function(evt){
+          evt.questions.forEach(function(q){
+            if(q.uid != this.uid) return;
+            this.value = q.value;
+          }.bind(this));
+        },
+
+        subscribeToEvents: function(eventBus){
+          eventBus.on('asq:question_type', this.onQuestionType.bind(this));
+        },
+
 
         domReady: function() {
           this.$.code.addEventListener('keypress', function(event){ 
