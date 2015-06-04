@@ -140,16 +140,8 @@ A major feature is that it will evaluate the code instantly and show the result.
         update: function(){
           var submission = this.getSubmittedCode();
           var result = this.evalInput(submission);
-          this.$.result.innerText = result;
+          this.$.result.innerText = result;     
 
-          // this.value = this.$.code.innerText;
-          
-          // if ( result === solution ){
-          //   theResultWrapper.classList.add('asq-correct');
-          // } else {
-          //   theResultWrapper.classList.remove('asq-correct');
-          // }        
-          
         },
 
         valueChanged: function() {
@@ -167,7 +159,7 @@ A major feature is that it will evaluate the code instantly and show the result.
              {
                 questionUid: this.uid, 
                 timestamp: new Date(),
-                submission: [] 
+                submission: ''
              }
          * Only enabled when the `role` of the element is <b>viewer</b>.
          *
@@ -182,11 +174,10 @@ A major feature is that it will evaluate the code instantly and show the result.
             this.value = "";
           }
 
-          // submission = this.value.replace(/[\s]+/g, " ").trim();
           submission = this.value;
           
           return {
-            questionId: this.uid,
+            questionUid: this.uid,
             timestamp: new Date(),
             submission: submission
           };
