@@ -40,6 +40,8 @@
 
 
   <script>
+  var x = document.querySelector('asq-js-function-body');
+  
   window.onmessage = function(e){
     if (typeof e.data.role == "string" && e.data.role.length > 0) {
       var allAsqElements = document.querySelectorAll('html /deep/ *');
