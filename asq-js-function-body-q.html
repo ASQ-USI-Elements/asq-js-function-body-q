@@ -2,29 +2,29 @@
 <link rel="import" href="../asq-base/asq-base.html">
 
 <!--
-`asq-js-function-body` is an element that is designed for learning writing javascript
+`asq-js-function-body-q` is an element that is designed for learning writing javascript
 functions. There are two necessary attributes, question and functionName.
 
 A major feature is that it will evaluate the code instantly and show the result.
 
 ##### Example
-      <asq-js-function-body functionName="wrap(str, tagName)" 
+      <asq-js-function-body-q functionName="wrap(str, tagName)" 
           question="wrap('hello World', 'div');">
         <asq-stem><h4>Implement a function that wraps a given 
             string with an HTML tag:</h4></asq-stem>
-      </asq-js-function-body>
+      </asq-js-function-body-q>
 
 
-@element asq-js-function-body
+@element asq-js-function-body-q
 @group ASQ Elements
 @blurb Element tore js-function-bodying relationships.
-@homepage http://github.com/ASQ-USI/asq-js-function-body
+@homepage http://github.com/ASQ-USI/asq-js-function-body-q
 -->
-<polymer-element name="asq-js-function-body">
+<polymer-element name="asq-js-function-body-q">
   <template>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"></link>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"></link>
-    <link rel="stylesheet" href="asq-js-function-body.css"></link>
+    <link rel="stylesheet" href="asq-js-function-body-q.css"></link>
 
     <content select="asq-stem"></content>
     <div>
@@ -107,7 +107,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         onQuestionType: function(evt){
           if(!evt || ! evt.questionType) return;
 
-          if(evt.questionType == 'asq-js-function-body'){
+          if(evt.questionType == 'asq-js-function-body-q'){
             if(evt.type == "restorePresenter"){
               if(this.role !== this.roles.PRESENTER) return;
               this.onRestorePresenter(evt);
@@ -226,7 +226,7 @@ A major feature is that it will evaluate the code instantly and show the result.
       };
 
       ASQ.asqify(p, true);
-      Polymer('asq-js-function-body', p);
+      Polymer('asq-js-function-body-q', p);
       
     })();
 

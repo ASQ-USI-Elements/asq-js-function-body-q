@@ -3,11 +3,11 @@
 <head>
   <meta name="asq-elements" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  <title>ASQ-JS-FUNCTION-BODY | Demo</title>
+  <title>asq-js-function-body-q | Demo</title>
 
   <script src="../webcomponentsjs/webcomponents.js"></script>
 
-  <link href="asq-js-function-body.html" rel="import">
+  <link href="asq-js-function-body-q.html" rel="import">
   <link href="../asq-stem/asq-stem.html" rel="import">
 
   <style shim-shadowdom>
@@ -34,13 +34,13 @@
 
   <section>
 
-    <asq-js-function-body functionName="wrap(str, tagName)" question="wrap('hello World', 'div');">
+    <asq-js-function-body-q functionName="wrap(str, tagName)" question="wrap('hello World', 'div');">
       <asq-stem><h4>Implement a function that wraps a given string with an HTML tag:</h4></asq-stem>
-    </asq-js-function-body>
+    </asq-js-function-body-q>
 
 
   <script>
-  var x = document.querySelector('asq-js-function-body');
+  var x = document.querySelector('asq-js-function-body-q');
   
   window.onmessage = function(e){
     if (typeof e.data.role == "string" && e.data.role.length > 0) {
