@@ -16,181 +16,273 @@ A major feature is that it will evaluate the code instantly and show the result.
 
 
 @element asq-js-function-body-q
+@demo demo/index.html
 @group ASQ Elements
 @blurb Element tore js-function-bodying relationships.
 @homepage http://github.com/ASQ-USI-Elements/asq-js-function-body-q
 -->
-<polymer-element name="asq-js-function-body-q">
+<dom-module id="asq-js-function-body-q">
+
   <template>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"></link>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"></link>
-    <link rel="stylesheet" href="asq-js-function-body-q.css"></link>
+
+    <style>
+
+      code, kbd, pre, samp {
+        font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+        font-size: 1em;
+      }
+
+      pre{
+        width: 100%;
+        background-color: #565656;
+        color: #FCFCFC;
+        display: block;
+        padding: 9.5px;
+        margin: 0 0 10px;
+        font-size: 13px;
+        line-height: 1.42857143;
+        word-break: break-all;
+        word-wrap: break-word;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: auto;
+      }
+
+      kbd{
+        padding: 2px 4px;
+        font-size: 90%;
+        color: #fff;
+        background-color: #333;
+        border-radius: 3px;
+        -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
+        box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
+      }
+
+      div.asq-code-input{
+        box-sizing:border-box;
+        padding: 6px 12px;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+        display: block;
+        width: 100%;
+        min-height: 6em;
+        height: auto;
+        font-size: 14px;
+        line-height: 1.42857143;
+        background: transparent;
+        color: #FCFCFC;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+
+      }
+
+      .asq-code-input:focus{
+        border-style:solid;
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+      }
+
+      pre.asq-evaluate{
+        padding:0;
+        margin:0;
+        background: transparent;
+        color: #333;
+        border: none;
+      }
+
+      h5 {
+        font-size: 14px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+        color: inherit;
+      }
+
+      .asq-result{
+          white-space:pre;
+      }
+
+      .asq-result-wrapper{
+        position:relative;
+        min-height: 20px;
+        padding: 19px;
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
+        border: 1px solid #e3e3e3;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+      }
+
+      .asq-result-wrapper.asq-correct{
+        background-color:#dff0d8;
+      }
+
+      .asq-correct-ok{
+        position:absolute;
+        top:5px;
+        right: 8px;
+        opacity:0;
+      }
+
+      .asq-correct .asq-correct-ok{
+        color:#5cb85c;
+        opacity:1;
+      }
+    </style>
 
     <content select="asq-stem"></content>
     <div>
-      <pre><code><span id="header" class="asq-code-header">function {{ functionName }} {</span>
-        <div id="code" class="form-control asq-code-input" contenteditable="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
+      <pre><code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
+        <div id="code" class="form-control asq-code-input" contenteditable$="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
       </code></pre>
     </div>
     
     <div>
       <h5>Test</h5>
       <kbd class="asq-command-line">
-        <i>  > </i>
-        <span id="evaluate" class="asq-evaluate">{{ question }}</span>
+        <i>  &gt; </i>
+        <span id="evaluate" class="asq-evaluate">{{ testExp }}</span>
       </kbd>
     </div>
 
     <div>
       <h5>Result:</h5>
-      <div id="wrapper" class="well asq-result-wrapper">
+      <div id="wrapper" class="asq-result-wrapper">
         <i class="asq-correct-ok glyphicon glyphicon-ok"></i>
         <samp id="result" class="asq-result"><samp>
-      </div>
+      </samp></samp></div>
     </div>
   </template>
 
   <script>
-    (function() {
-      var p = {
+    (function () {
+      Polymer({
+        is: 'asq-js-function-body-q',
 
+        behaviors: [ASQ.asqQuestionElementBehavior],
 
-        publish: {
+        properties: {
           /**
            * The expression that will be evaluated.
-           *
-           * @attribute question
-           * @type string
-           * @default ''
            */
-          question: '',
+          testExp: {
+            type: 'String',
+            value: '',
+            notify: true
+          },
 
           /**
            * The name of the function.
-           * 
-           * @attribute functionName
-           * @type string
-           * @default ''
            */
-          functionName: {value: '', reflect: true},
+          functionName: {
+            type: 'String',
+            value: '',
+            notify: true
+          },
 
           /**
            * Set to true to disable the element.
-           *
-           * @attribute disabled
-           * @type boolean
-           * @default false
            */
-          disabled: {value: false, reflect: true},
+          disabled: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
 
           /**
            * Get or set the text.
-           * 
-           * @attribute value
-           * @type string
-           * @default ''
            */
-          value: {value: '', reflect: true},
-
+          value: {
+            type: 'String',
+            value: '',
+            notify: true,
+            observer: 'valueChanged' 
+          }
         },
 
-        created: function(){
-          document.addEventListener('asq-ready', function(evt){
+        created: function () {
+          document.addEventListener('asq-ready', function (evt) {
             try {
-              this.subscribeToEvents(evt.detail.asqEventBus)
-            } catch(err){
-              console.debug('failed to subscribeToEvents');
+              this._subscribeToEvents(evt.detail.asqEventBus);
+            } catch (err) {
+              console.debug('failed to _subscribeToEvents');
             }
           }.bind(this));
         },
 
-        onQuestionType: function(evt){
-          if(!evt || ! evt.questionType) return;
-
-          if(evt.questionType == 'asq-js-function-body-q'){
-            if(evt.type == "restorePresenter"){
-              if(this.role !== this.roles.PRESENTER) return;
+        _onQuestionType: function (evt) {
+          if (!evt || !evt.questionType)
+            return;
+          if (evt.questionType == 'asq-js-function-body-q') {
+            if (evt.type == 'restorePresenter') {
+              if (this.role !== this.roles.PRESENTER)
+                return;
               this.onRestorePresenter(evt);
-            }
-            else if(evt.type == "restoreViewer"){
-              if(this.role !== this.roles.VIEWER) return;
+            } else if (evt.type == 'restoreViewer') {
+              if (this.role !== this.roles.VIEWER)
+                return;
               this.onRestoreViewer(evt);
             }
           }
         },
 
-        onRestorePresenter: function(evt){
-
+        onRestorePresenter: function (evt) {
         },
 
-        onRestoreViewer: function(evt){
-          evt.questions.forEach(function(q){
-            if(q.uid != this.uid) return;
+        onRestoreViewer: function (evt) {
+          evt.questions.forEach(function (q) {
+            if (q.uid != this.uid)
+              return;
             this.value = q.value;
           }.bind(this));
         },
 
-        subscribeToEvents: function(eventBus){
-          eventBus.on('asq:question_type', this.onQuestionType.bind(this));
+        _subscribeToEvents: function (eventBus) {
+          eventBus.on('asq:question_type', this._onQuestionType.bind(this));
         },
 
+        // // TODO: MutationObserver alone shoud deal with the case
+        // this.targetObserver = new MutationObserver(this._update.bind(this));
+        // this.targetObserver.observe(this.$.code, {childList: true});
 
-        domReady: function() {
-          this.$.code.addEventListener('keypress', function(event){ 
-            var keyCode = event.keyCode || event.which; 
-            if (keyCode == 9) {
-                alert("tono")
-               event.preventDefault();
-            }
-          });
-
-          var interval = 300;
-          var timer;
-          
-          this.$.code.addEventListener('input', function(evt){
-            clearInterval(timer);
-            this.value = this.$.code.innerText;
-            timer = setTimeout(this.update.bind(this), interval);
-          }.bind(this)); 
-
-          // // TODO: MutationObserver alone shoud deal with the case
-          // this.targetObserver = new MutationObserver(this.update.bind(this));
-          // this.targetObserver.observe(this.$.code, {childList: true});
-        }, 
-
-        getSubmittedCode: function () {
-          var submission = this.$.header.innerHTML;
+        _getSubmittedCode: function () {
+          var submission = this.$.header.textContent;
           submission += this.$.code.innerText;
-          submission += this.$.footer.innerHTML;
-          submission += ';\n' + this.$.evaluate.innerHTML;
-            
+          submission += this.$.footer.textContent;
+          submission += ';\n' + this.$.evaluate.textContent;
           return submission;
         },
 
-        evalInput: function(expr){
+        evalInput: function (expr) {
           var result;
-          try{
-              result = eval(expr);
-          }catch(err){
-              result = err.toString();
-          }    
+          try {
+            result = eval(expr);
+          } catch (err) {
+            result = err.toString();
+          }
           return JSON.stringify(result, undefined, 2);
         },
 
-        update: function(){
-          var submission = this.getSubmittedCode();
+        _update: function () {
+          var submission = this._getSubmittedCode();
           var result = this.evalInput(submission);
-          this.$.result.innerText = result;     
-
+          this.$.result.innerText = result;
         },
 
-        valueChanged: function() {
-          if ( this.value === this.$.code.innerText ) {
-            return
+        valueChanged: function () {
+          if (this.value === this.$.code.textContent) {
+            return;
           }
-
           this.$.code.innerText = this.value;
-          this.update();
+          this._update();
         },
 
         /**
@@ -205,17 +297,14 @@ A major feature is that it will evaluate the code instantly and show the result.
          *
          * @method submit
          */
-        submit: function() {
-          if ( this.role !== this.roles.VIEWER ) {
+        submit: function () {
+          if (this.role !== this.roles.VIEWER) {
             return;
           }
-
-          if ( ! this.value ) {
-            this.value = "";
+          if (!this.value) {
+            this.value = '';
           }
-
           submission = this.value;
-          
           return {
             questionUid: this.uid,
             timestamp: new Date(),
@@ -223,12 +312,23 @@ A major feature is that it will evaluate the code instantly and show the result.
           };
         },
 
-      };
-
-      ASQ.asqify(p, true);
-      Polymer('asq-js-function-body-q', p);
-      
-    })();
-
+        ready: function () {
+          this.$.code.addEventListener('keypress', function (event) {
+            var keyCode = event.keyCode || event.which;
+            if (keyCode == 9) {
+              alert('tono');
+              event.preventDefault();
+            }
+          });
+          var interval = 300;
+          var timer;
+          this.$.code.addEventListener('input', function (evt) {
+            clearInterval(timer);
+            this.value = this.$.code.innerText;
+            timer = setTimeout(this._update.bind(this), interval);
+          }.bind(this));
+        }
+      });
+    }());
   </script>
-</polymer-element>
+</dom-module>

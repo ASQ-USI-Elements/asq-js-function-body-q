@@ -5,14 +5,14 @@
 
   <title>asq-js-function-body-q | Demo</title>
 
-  <script src="../webcomponentsjs/webcomponents.js"></script>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link href="asq-js-function-body-q.html" rel="import">
-  <link href="../asq-stem/asq-stem.html" rel="import">
+  <link href="../asq-js-function-body-q.html" rel="import">
+  <link href="../../asq-stem/asq-stem.html" rel="import">
 
   <style shim-shadowdom>
     body {
-      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 14px;
       margin: 0;
       padding: 24px;
@@ -34,7 +34,7 @@
 
   <section>
 
-    <asq-js-function-body-q functionName="wrap(str, tagName)" question="wrap('hello World', 'div');">
+    <asq-js-function-body-q function-name="wrap(str, tagName)" test-exp="wrap('hello World', 'div');">
       <asq-stem><h4>Implement a function that wraps a given string with an HTML tag:</h4></asq-stem>
     </asq-js-function-body-q>
 
