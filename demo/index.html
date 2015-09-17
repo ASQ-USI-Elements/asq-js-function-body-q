@@ -33,32 +33,37 @@
 
 
   <section>
+    <h5>Viewer</h5>
+    <asq-js-function-body-q function-name="wrap(str, tagName)" test-exp="wrap('hello World', 'div');" role="viewer">
+      <asq-stem><h4>Implement a function that wraps a given string with an HTML tag:</h4></asq-stem>
+    </asq-js-function-body-q>
 
-    <asq-js-function-body-q function-name="wrap(str, tagName)" test-exp="wrap('hello World', 'div');">
+    <h5>Presenter</h5>
+    <asq-js-function-body-q function-name="wrap(str, tagName)" test-exp="wrap('hello World', 'div');" role="presenter">
       <asq-stem><h4>Implement a function that wraps a given string with an HTML tag:</h4></asq-stem>
     </asq-js-function-body-q>
 
 
   <script>
-  var x = document.querySelector('asq-js-function-body-q');
+  // var x = document.querySelector('asq-js-function-body-q');
   
-  window.onmessage = function(e){
-    if (typeof e.data.role == "string" && e.data.role.length > 0) {
-      var allAsqElements = document.querySelectorAll('html /deep/ *');
-      allAsqElements = Array.prototype.slice.call(allAsqElements).filter(function(el) {
-        return isASQEl(el);
-      });
+  // window.onmessage = function(e){
+  //   if (typeof e.data.role == "string" && e.data.role.length > 0) {
+  //     var allAsqElements = document.querySelectorAll('html /deep/ *');
+  //     allAsqElements = Array.prototype.slice.call(allAsqElements).filter(function(el) {
+  //       return isASQEl(el);
+  //     });
 
-      //set role for every asq-element in this page
-      allAsqElements.forEach(function(elem, index) {
-        elem.role = e.data.role;
-      });
-    }
+  //     //set role for every asq-element in this page
+  //     allAsqElements.forEach(function(elem, index) {
+  //       elem.role = e.data.role;
+  //     });
+  //   }
 
-    function isASQEl(el) {
-      return el.localName.indexOf('asq-') != -1;
-    } 
-  };
+  //   function isASQEl(el) {
+  //     return el.localName.indexOf('asq-') != -1;
+  //   } 
+  // };
 </script>
 
 
