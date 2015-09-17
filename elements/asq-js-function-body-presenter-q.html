@@ -39,12 +39,25 @@ A major feature is that it will evaluate the code instantly and show the result.
     }
 
      #le-content{
-      @apply(--layout-horizontal)
+      @apply(--layout-horizontal);
+      @apply(--asq-js-function-body-q-content);
      }
+
      #editor{
       @apply(--layout-flex-3);
+      @apply(--asq-js-function-body-q-editor);
      }
+
+     #header{
+      @apply(--asq-js-function-body-q-header);
+     }
+
      #list-container{
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+     }
+
+     #list-container iron-pages{
       @apply(--layout-flex);
       @apply(--layout-vertical);
      }
@@ -74,7 +87,6 @@ A major feature is that it will evaluate the code instantly and show the result.
         display: block;
         padding: 9.5px;
         margin: 0 0 10px;
-        font-size: 13px;
         line-height: 1.42857143;
         word-break: break-all;
         word-wrap: break-word;
@@ -94,6 +106,7 @@ A major feature is that it will evaluate the code instantly and show the result.
       }
 
       div.asq-code-input{
+        @apply(--asq-js-function-body-q-code-input);
         box-sizing:border-box;
         padding: 6px 12px;
         border: 1px dashed #ccc;
@@ -178,7 +191,7 @@ A major feature is that it will evaluate the code instantly and show the result.
       <div id="editor">
         <div>
           <pre><code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
-            <div id="code" class="form-control asq-code-input" contenteditable$="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
+            <div id="code" class="asq-code-input" contenteditable$="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
           </code></pre>
         </div>
         
@@ -200,15 +213,19 @@ A major feature is that it will evaluate the code instantly and show the result.
       </div>
 
       <div id="list-container">
-        <paper-tabs selected="0" selected-attribute="active" noink role="tablist">     
+        <paper-tabs selected="{{_selectedTab}}" selected="0" selected-attribute="active" noink role="tablist">     
+          <paper-tab role="tab"></paper-tab>
           <paper-tab role="tab">Submissions</paper-tab>            
         </paper-tabs>
-        <iron-list id="submissionList" items="[[_submissions]]" as="submission" selection-enabled selected-item="{{_selectedSubmissionItem}}">
-          <template>
-            <paper-item>#<span>[[index]]</span>&nbsp;&nbsp;<span>[[submission.submission]]</span>
-            </paper-item>
-          </template>
-        </iron-list>
+        <iron-pages selected="{{_selectedTab}}">
+          <div></div>
+          <iron-list id="submissionList" items="[[_submissions]]" as="submission" selection-enabled selected-item="{{_selectedSubmissionItem}}">
+            <template>
+              <paper-item>#<span>[[index]]</span>&nbsp;&nbsp;<span>[[submission.submission]]</span>
+              </paper-item>
+            </template>
+          </iron-list>
+        </iron-pages> 
       </div>
 
     </div>
@@ -261,6 +278,10 @@ A major feature is that it will evaluate the code instantly and show the result.
 
           _selectedSubmissionItem: {
             observer: '_selectedSubmissionItemChanged'
+          },
+
+          _selectedTab:{
+            notify: true
           },
 
           /**
