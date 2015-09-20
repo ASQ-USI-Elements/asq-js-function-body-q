@@ -1,11 +1,12 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../asq-base/asq-base.html">
 
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../iron-list/iron-list.html">
+<link rel="import" href="../../paper-input/paper-textarea.html">
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-tabs/paper-tab.html">
 <link rel="import" href="../../paper-tabs/paper-tabs.html">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../iron-list/iron-list.html">
 
 <!--
 `asq-js-function-body-presenter-q` is the presenter element for `asq-js-function-body-q` 
@@ -36,6 +37,14 @@ A major feature is that it will evaluate the code instantly and show the result.
       --paper-toolbar-background: #CFD8DC;
       --paper-toolbar-color: #000;  
       --paper-tabs-selection-bar-color: #333;
+    }
+
+    paper-textarea{
+      --paper-input-container-focus-color: #CFD8DC;
+      --paper-input-container-input-color: #FCFCFC;
+      --paper-input-container-input:{
+        font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+      };
     }
 
      #le-content{
@@ -71,6 +80,7 @@ A major feature is that it will evaluate the code instantly and show the result.
        padding: 12px 5px 0;
        background-color: white;
        cursor: pointer;
+       font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
        @apply(--shadow-elevation-2dp);
      }
 
@@ -95,6 +105,18 @@ A major feature is that it will evaluate the code instantly and show the result.
         overflow: auto;
       }
 
+      #function-container{
+        width: 100%;
+        box-sizing:border-box;
+        background-color: #565656;
+        color: #FCFCFC;
+        display: block;
+        padding: 9.5px;
+        margin: 0 0 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
       kbd{
         padding: 2px 4px;
         font-size: 90%;
@@ -105,34 +127,15 @@ A major feature is that it will evaluate the code instantly and show the result.
         box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
       }
 
-      div.asq-code-input{
+      .asq-code-input{
         @apply(--asq-js-function-body-q-code-input);
         box-sizing:border-box;
-        padding: 6px 12px;
+        padding: 4px 8px;
         border: 1px dashed #ccc;
         border-radius: 4px;
-        display: block;
-        width: 100%;
-        min-height: 6em;
-        height: auto;
-        font-size: 14px;
-        line-height: 1.42857143;
-        background: transparent;
-        color: #FCFCFC;
         -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-
-      }
-
-      .asq-code-input:focus{
-        border-style:solid;
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        margin: 5px 0;
       }
 
       pre.asq-evaluate{
@@ -189,10 +192,13 @@ A major feature is that it will evaluate the code instantly and show the result.
     <content select="asq-stem"></content>
     <div id="le-content">
       <div id="editor">
-        <div>
-          <pre><code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
-            <div id="code" class="asq-code-input" contenteditable$="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
-          </code></pre>
+        <div id="function-container">
+          <code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
+            <div style="padding-left: 10px;">
+            <paper-textarea id="code" class="asq-code-input" on-keydown="onTextareaKeydown" no-label-float  label="enter your code here" value="{{value}}" disabled="{{disabled}}"></paper-textarea>
+          </div>
+          <span id="footer" class="asq-code-footer">}</span>
+          </code>
         </div>
         
         <div>
@@ -272,8 +278,7 @@ A major feature is that it will evaluate the code instantly and show the result.
           value: {
             type: 'String',
             value: '',
-            notify: true,
-            observer: '_valueChanged' 
+            notify: true
           },
 
           _selectedSubmissionItem: {
@@ -294,14 +299,13 @@ A major feature is that it will evaluate the code instantly and show the result.
           }
         },
 
-        created: function () {
-          document.addEventListener('asq-ready', function (evt) {
-            try {
-              this._subscribeToEvents(evt.detail.asqEventBus);
-            } catch (err) {
-              console.debug('failed to _subscribeToEvents');
+        onTextareaKeydown: function(event, detail){
+          var keyCode = event.keyCode || event.which;
+
+            //mute tabs
+            if (keyCode == 9) {
+              event.preventDefault();
             }
-          }.bind(this));
         },
 
         _onQuestionType: function (evt) {
@@ -334,13 +338,10 @@ A major feature is that it will evaluate the code instantly and show the result.
           eventBus.on('asq:question_type', this._onQuestionType.bind(this));
         },
 
-        // // TODO: MutationObserver alone shoud deal with the case
-        // this.targetObserver = new MutationObserver(this._update.bind(this));
-        // this.targetObserver.observe(this.$.code, {childList: true});
 
         _getSubmittedCode: function () {
           var submission = this.$.header.textContent;
-          submission += this.$.code.textContent;
+          submission += this.value;
           submission += this.$.footer.textContent;
           submission += ';\n' + this.$.evaluate.textContent;
           return submission;
@@ -362,14 +363,6 @@ A major feature is that it will evaluate the code instantly and show the result.
           this.$.result.textContent = result;
         },
 
-        _valueChanged: function () {
-          if (this.value === this.$.code.textContent) {
-            return;
-          }
-          this.$.code.textContent = this.value;
-          this._update();
-        },
-
         _selectedSubmissionItemChanged: function(newItem, old){
           if(! newItem) return;
           this.value = newItem.submission;
@@ -387,7 +380,6 @@ A major feature is that it will evaluate the code instantly and show the result.
           var timer;
           this.$.code.addEventListener('input', function (evt) {
             clearInterval(timer);
-            this.value = this.$.code.textContent;
             timer = setTimeout(this._update.bind(this), interval);
           }.bind(this));
         },

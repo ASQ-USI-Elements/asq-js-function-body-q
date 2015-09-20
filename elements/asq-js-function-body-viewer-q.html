@@ -1,4 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-input/paper-textarea.html">
+
 <link rel="import" href="../../asq-base/asq-base.html">
 
 <!--
@@ -32,8 +34,30 @@ A major feature is that it will evaluate the code instantly and show the result.
       --paper-tabs-selection-bar-color: #333;
     }
 
+
+    paper-textarea{
+      --paper-input-container-focus-color: #CFD8DC;
+      --paper-input-container-input-color: #FCFCFC;
+      --paper-input-container-input:{
+        font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+      };
+    }
+
     #le-content{
       @apply(--asq-js-function-body-q-content);
+    }
+
+    #editor{
+      width: 100%;
+      box-sizing:border-box;
+      background-color: #565656;
+      color: #FCFCFC;
+      display: block;
+      padding: 9.5px;
+      margin: 0 0 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      @apply(--asq-js-function-body-q-editor);
     }
 
     #header{
@@ -71,34 +95,15 @@ A major feature is that it will evaluate the code instantly and show the result.
         box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
       }
 
-      div.asq-code-input{
+      .asq-code-input{
         @apply(--asq-js-function-body-q-code-input);
         box-sizing:border-box;
-        padding: 6px 12px;
+        padding: 4px 8px;
         border: 1px dashed #ccc;
         border-radius: 4px;
-        display: block;
-        width: 100%;
-        min-height: 6em;
-        height: auto;
-        font-size: 14px;
-        line-height: 1.42857143;
-        background: transparent;
-        color: #FCFCFC;
         -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-
-      }
-
-      .asq-code-input:focus{
-        border-style:solid;
-        border-color: #66afe9;
-        outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        margin: 5px 0;
       }
 
       pre.asq-evaluate{
@@ -154,10 +159,13 @@ A major feature is that it will evaluate the code instantly and show the result.
 
     <content select="asq-stem"></content>
     <div id="le-content">
-      <div>
-        <pre><code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
-          <div id="code" class="asq-code-input" contenteditable$="{{!disabled}}"></div><span id="footer" class="asq-code-footer">}</span>
-        </code></pre>
+      <div id="editor">
+        <code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
+          <div style="padding-left: 10px;">
+            <paper-textarea id="code" class="asq-code-input" on-keydown="onTextareaKeydown" no-label-float  label="enter your code here" value="{{value}}" disabled="{{disabled}}"></paper-textarea>
+          </div>
+          <span id="footer" class="asq-code-footer">}</span>
+        </code>
       </div>
       
       <div>
@@ -220,7 +228,6 @@ A major feature is that it will evaluate the code instantly and show the result.
             type: 'String',
             value: '',
             notify: true,
-            observer: '_valueChanged' 
           },
 
           /**
@@ -233,14 +240,13 @@ A major feature is that it will evaluate the code instantly and show the result.
           }
         },
 
-        created: function () {
-          document.addEventListener('asq-ready', function (evt) {
-            try {
-              this._subscribeToEvents(evt.detail.asqEventBus);
-            } catch (err) {
-              console.debug('failed to _subscribeToEvents');
+        onTextareaKeydown: function(event, detail){
+          var keyCode = event.keyCode || event.which;
+
+            //mute tabs
+            if (keyCode == 9) {
+              event.preventDefault();
             }
-          }.bind(this));
         },
 
         _onQuestionType: function (evt) {
@@ -261,17 +267,9 @@ A major feature is that it will evaluate the code instantly and show the result.
           }.bind(this));
         },
 
-        _subscribeToEvents: function (eventBus) {
-          eventBus.on('asq:question_type', this._onQuestionType.bind(this));
-        },
-
-        // // TODO: MutationObserver alone shoud deal with the case
-        // this.targetObserver = new MutationObserver(this._update.bind(this));
-        // this.targetObserver.observe(this.$.code, {childList: true});
-
         _getSubmittedCode: function () {
           var submission = this.$.header.textContent;
-          submission += this.$.code.textContent;
+          submission += this.value;
           submission += this.$.footer.textContent;
           submission += ';\n' + this.$.evaluate.textContent;
           return submission;
@@ -291,14 +289,6 @@ A major feature is that it will evaluate the code instantly and show the result.
           var submission = this._getSubmittedCode();
           var result = this.evalInput(submission);
           this.$.result.textContent = result;
-        },
-
-        _valueChanged: function () {
-          if (this.value === this.$.code.textContent) {
-            return;
-          }
-          this.$.code.textContent = this.value;
-          this._update();
         },
 
         /**
@@ -326,18 +316,13 @@ A major feature is that it will evaluate the code instantly and show the result.
         },
 
         ready: function () {
-          this.$.code.addEventListener('keypress', function (event) {
-            var keyCode = event.keyCode || event.which;
-            if (keyCode == 9) {
-              alert('tono');
-              event.preventDefault();
-            }
-          });
+
+          //scan for code changes every 300ms
+
           var interval = 300;
           var timer;
           this.$.code.addEventListener('input', function (evt) {
             clearInterval(timer);
-            this.value = this.$.code.textContent;
             timer = setTimeout(this._update.bind(this), interval);
           }.bind(this));
         },
