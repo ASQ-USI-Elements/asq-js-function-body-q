@@ -1,3 +1,6 @@
+// original author Carlos Vadillo (Github: @cvadillo)
+// copied from https://github.com/cvadillo/js-object-pretty-print
+
 var pretty = function (jsObject, indentLength, outputTo, fullFunction) {
     var indentString,
         newLine,
