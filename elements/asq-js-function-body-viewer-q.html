@@ -124,10 +124,6 @@ A major feature is that it will evaluate the code instantly and show the result.
         color: inherit;
       }
 
-      .asq-result{
-          white-space:pre;
-      }
-
       .asq-result-wrapper{
         position:relative;
         min-height: 20px;
@@ -157,7 +153,18 @@ A major feature is that it will evaluate the code instantly and show the result.
       }
     </style>
 
+    <script id="worker1" type="javascript/worker">
+      // This script won't be parsed by JS engines
+      // because its type is javascript/worker.
+
+      self.onmessage = function(e) {
+        var result = eval(e.data)
+        self.postMessage(result);
+      };
+    </script>
+
     <content select="asq-stem"></content>
+
     <div id="le-content">
       <div id="editor">
         <code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
@@ -228,6 +235,7 @@ A major feature is that it will evaluate the code instantly and show the result.
             type: 'String',
             value: '',
             notify: true,
+            observer: '_valueChanged'
           },
 
           /**
@@ -243,7 +251,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         onTextareaKeydown: function(event, detail){
           var keyCode = event.keyCode || event.which;
 
-            //mute tabs
+            // mute tabs
             if (keyCode == 9) {
               event.preventDefault();
             }
@@ -268,8 +276,8 @@ A major feature is that it will evaluate the code instantly and show the result.
         },
 
         _getSubmittedCode: function () {
-          var submission = this.$.header.textContent;
-          submission += this.value;
+          var submission = this.$.header.textContent + '\n';
+          submission += this.value + '\n';
           submission += this.$.footer.textContent;
           submission += ';\n' + this.$.evaluate.textContent;
           return submission;
@@ -287,8 +295,36 @@ A major feature is that it will evaluate the code instantly and show the result.
 
         _update: function () {
           var submission = this._getSubmittedCode();
-          var result = this.evalInput(submission);
-          this.$.result.textContent = result;
+
+          // if you want DOM and document properties for the code you need
+          // to uncomment the next two lines and comment those after.
+          // var result = this.evalInput(submission);
+          // this.$.result.textContent = result;
+
+          var worker = new Worker(window.URL.createObjectURL(this.workerBlob));
+
+          // kill worker after 10 seconds no matter what
+          var id = setTimeout(function(){
+            worker.terminate();
+            worker = null;
+          }, 10000);
+
+          worker.onmessage = function(e) {
+            clearTimeout(id);
+            worker.terminate();
+            worker = null;
+            this.$.result.textContent = e.data;
+          }.bind(this)
+
+          worker.onerror = function(e) {
+            clearTimeout(id);
+            worker.terminate();
+            worker = null;
+            this.$.result.textContent = '[' + e.lineno + ':' + e.colno + '] '  + e.message;
+          }.bind(this)
+
+          // start worker
+          worker.postMessage(submission);  
         },
 
         /**
@@ -316,15 +352,20 @@ A major feature is that it will evaluate the code instantly and show the result.
         },
 
         ready: function () {
+          // worker script
+          this.workerBlob = new Blob([this.$$('#worker1').textContent]);
 
-          //scan for code changes every 300ms
+          // scan for code changes every 300ms
+          this.interval = 300;
+          this.timer;
+        },
 
-          var interval = 300;
-          var timer;
-          this.$.code.addEventListener('input', function (evt) {
-            clearInterval(timer);
-            timer = setTimeout(this._update.bind(this), interval);
-          }.bind(this));
+        _valueChanged: function(value, old){
+          //cancel previous timer
+          clearTimeout(this.timer);
+
+          //if nothing happens for this.interval ms we will evaluate the code
+          timer = setTimeout(this._update.bind(this), this.interval);
         },
 
         _eventBusChanged: function (eventBus, old) {
