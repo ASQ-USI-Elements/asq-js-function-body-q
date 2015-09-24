@@ -29,14 +29,14 @@ A major feature is that it will evaluate the code instantly and show the result.
   <template>
      <!-- Viewer -->
      <template is="dom-if" if="{{hasRole(role, roles.VIEWER)}}" restamp>
-       <asq-js-function-body-viewer-q role="viewer" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]">
+       <asq-js-function-body-viewer-q role="viewer" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
          <content></content>
        </asq-js-function-body-viewer-q>
      </template>
      
      <!-- Presenter -->
     <template is="dom-if" if="{{hasRole(role, roles.PRESENTER)}}" restamp>
-       <asq-js-function-body-presenter-q role="presenter" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]">
+       <asq-js-function-body-presenter-q role="presenter" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
          <content></content>
        </asq-js-function-body-presenter-q>
      </template>
