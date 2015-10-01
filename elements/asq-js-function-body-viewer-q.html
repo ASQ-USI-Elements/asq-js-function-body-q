@@ -341,7 +341,8 @@ A major feature is that it will evaluate the code instantly and show the result.
           this.worker.onmessage = function(e) {
             clearTimeout(id);
             this._killWorker(this.worker);
-            this.result = this.consoleTxt = '';
+            this.result = '';
+            this.consoleTxt = '';
             if(e.data.type =="result"){
               this.result = e.data.value;
             }
