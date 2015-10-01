@@ -8,6 +8,7 @@
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-tabs/paper-tab.html">
 <link rel="import" href="../../paper-tabs/paper-tabs.html">
+<link rel="import" href="../../paper-styles/color.html">
 
 <!--
 `asq-js-function-body-presenter-q` is the presenter element for `asq-js-function-body-q` 
@@ -84,6 +85,11 @@ A major feature is that it will evaluate the code instantly and show the result.
        cursor: pointer;
        font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
        @apply(--shadow-elevation-2dp);
+       outline: none;
+     }
+
+     #submissionList paper-item[focused]{
+       background-color: var(--google-grey-300);
      }
 
       code, kbd, pre, samp {
@@ -359,11 +365,6 @@ A major feature is that it will evaluate the code instantly and show the result.
 
           this._submissions = evt.question.answers;
         },
-
-        _subscribeToEvents: function (eventBus) {
-          eventBus.on('asq:question_type', this._onQuestionType.bind(this));
-        },
-
 
         _getSubmittedCode: function () {
           var submission = this.$.header.textContent + '\n';

@@ -18,7 +18,8 @@
     "paper-input": "PolymerElements/paper-input#~1.0.14",
     "paper-item": "polymerelements/paper-item#~1.0.2",
     "paper-tabs": "polymerelements/paper-tabs#~1.0.2",
-    "polymer": "polymer/polymer#~1.1.3"
+    "polymer": "polymer/polymer#~1.1.3",
+    "paper-styles": "PolymerElements/paper-styles#~1.0.11"
   },
   "ignore": [
     "index.js",

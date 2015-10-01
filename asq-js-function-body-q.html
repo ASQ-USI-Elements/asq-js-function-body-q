@@ -119,9 +119,7 @@ A major feature is that it will evaluate the code instantly and show the result.
             if (!el) {
               throw new Error('submit(): expected asq-js-function-body-viewer-q element to exist');
             }
-            var submission = el.submit();
-            submission.questionUid = this.uid;
-            return submission;
+            return el.submit();
           }
         },
 
