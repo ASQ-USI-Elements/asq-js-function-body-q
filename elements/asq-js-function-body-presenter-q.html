@@ -394,6 +394,7 @@ A major feature is that it will evaluate the code instantly and show the result.
           // start with a new worker
           this._killWorker(this.worker);
           this.worker = new Worker(this.resolveUrl("../evalWorker.js"));
+          this.result = this.consoleTxt = '';
 
           // kill worker after 10 seconds no matter what
           var id = setTimeout(function(){
@@ -403,8 +404,6 @@ A major feature is that it will evaluate the code instantly and show the result.
           this.worker.onmessage = function(e) {
             clearTimeout(id);
             this._killWorker(this.worker);
-            this.result = '';
-            this.consoleTxt = '';
             if(e.data.type =="result"){
               this.result = e.data.value;
             }
