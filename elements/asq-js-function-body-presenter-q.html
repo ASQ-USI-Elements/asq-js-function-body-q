@@ -3,6 +3,7 @@
 
 <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../iron-list/iron-list.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
 <link rel="import" href="../../paper-input/paper-textarea.html">
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-tabs/paper-tab.html">
@@ -170,7 +171,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         color: inherit;
       }
 
-      .asq-result-wrapper{
+      .asq-result-wrapper, .asq-console-wrapper{
         position:relative;
         min-height: 20px;
         padding: 19px;
@@ -224,6 +225,11 @@ A major feature is that it will evaluate the code instantly and show the result.
           <div id="wrapper" class="asq-result-wrapper">
             <i class="asq-correct-ok glyphicon glyphicon-ok"></i>
             <pre class="result-pre"><samp id="result" class="asq-result">{{ result }}</samp></pre>
+          </div>
+          <h5>Console:</h5>
+          <div id="wrapper" class="asq-console-wrapper">
+            <i class="asq-correct-ok glyphicon glyphicon-ok"></i>
+            <pre class="result-pre"><samp id="result" class="asq-result">{{consoleTxt}}</samp></pre>
           </div>
         </div>
       </div>
@@ -367,15 +373,15 @@ A major feature is that it will evaluate the code instantly and show the result.
           return submission;
         },
 
-        evalInput: function (expr) {
-          var result;
-          try {
-            result = eval(expr);
-          } catch (err) {
-            result = err.toString();
-          }
-          return JSON.stringify(result, undefined, 2);
-        },
+        // evalInput: function (expr) {
+        //   var result;
+        //   try {
+        //     result = eval(expr);
+        //   } catch (err) {
+        //     result = err.toString();
+        //   }
+        //   return JSON.stringify(result, undefined, 2);
+        // },
 
                 _update: function () {
           var submission = this._getSubmittedCode();
@@ -397,7 +403,13 @@ A major feature is that it will evaluate the code instantly and show the result.
           this.worker.onmessage = function(e) {
             clearTimeout(id);
             this._killWorker(this.worker);
-            this.result = e.data;
+            this.result = this.consoleTxt = '';
+            if(e.data.type =="result"){
+              this.result = e.data.value;
+            }
+            if(e.data.type== "console"){
+              this.consoleTxt = e.data.value;
+            }
           }.bind(this);
 
           this.worker.onerror = function(e) {

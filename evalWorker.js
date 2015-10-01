@@ -1,6 +1,29 @@
 // original author Carlos Vadillo (Github: @cvadillo)
 // copied from https://github.com/cvadillo/js-object-pretty-print
 
+var window = {};
+window.alert = function(){
+  console.log.apply(console, ["Alert: "].concat(Array.prototype.slice.call(arguments)));
+};
+var alert = window.alert;
+var console = {
+  log: function(){
+    var str = "";
+    for(var i = 0; i < arguments.length; i++){
+      str += JSON.stringify(arguments[i]) + " ";
+    }
+    str += "\n";
+    // send the message back to the main thread
+    self.postMessage({type: "console", value: str});
+  },
+  error: function(){
+    console.log.apply(console, ["ERROR: "].concat(Array.prototype.slice.call(arguments)));
+  },
+  warn: function(){
+    console.log.apply(console, ["WARNING: "].concat(Array.prototype.slice.call(arguments)));
+  }
+};
+
 var pretty = function (jsObject, indentLength, outputTo, fullFunction) {
     var indentString,
         newLine,
@@ -168,5 +191,5 @@ self.onmessage = function(e) {
     if(typeof result != undefined && result != null && result != ""){
       result = pretty(result, 2, "PRINT", true)
     }
-    self.postMessage(result);
+    self.postMessage({type: "result", value: result});
   };
