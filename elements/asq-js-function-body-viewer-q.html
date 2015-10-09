@@ -146,7 +146,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         color: inherit;
       }
 
-      .asq-result-wrapper, .asq-console-wrapper{
+      .asq-result-wrapper{
         position:relative;
         min-height: 20px;
         padding: 19px;
@@ -156,6 +156,26 @@ A major feature is that it will evaluate the code instantly and show the result.
         border-radius: 4px;
         -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
         box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+      }
+
+      .asq-console-wrapper{
+        position:relative;
+        min-height: 20px;
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
+        border: 1px solid #e3e3e3;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+      }
+
+      .console-entry{
+        border-bottom: 1px solid #ccc;
+        padding: 1px 3px;
+      }
+
+      .console-entry:last-of-type{
+        border-bottom: none;
       }
 
       .asq-result-wrapper.asq-correct{
@@ -201,10 +221,15 @@ A major feature is that it will evaluate the code instantly and show the result.
           <i class="asq-correct-ok glyphicon glyphicon-ok"></i>
           <pre class="result-pre"><samp id="result" class="asq-result">{{result}}</samp></pre>
         </div>
-        <h5>Console:</h5>
+        <h5>Console Output:</h5>
         <div id="wrapper" class="asq-console-wrapper">
           <i class="asq-correct-ok glyphicon glyphicon-ok"></i>
-          <pre class="result-pre"><samp id="result" class="asq-result">{{consoleTxt}}</samp></pre>
+          <samp id="result" class="asq-result">
+            <template is="dom-repeat" items="[[_consoleEntries]]" as="item">
+              <div class="console-entry"><pre class="result-pre">[[item]]</pre></div>
+            </template>
+          <!-- {{consoleTxt}} -->
+          </samp>
         </div>
       </div>
     </div>
@@ -222,7 +247,7 @@ A major feature is that it will evaluate the code instantly and show the result.
            * The expression that will be evaluated.
            */
           testExp: {
-            type: 'String',
+            type: String,
             value: '',
             notify: true
           },
@@ -231,7 +256,7 @@ A major feature is that it will evaluate the code instantly and show the result.
            * The name of the function.
            */
           functionName: {
-            type: 'String',
+            type: String,
             value: '',
             notify: true
           },
@@ -249,7 +274,7 @@ A major feature is that it will evaluate the code instantly and show the result.
            * Value of the paper-textarea.
            */
           value: {
-            type: 'String',
+            type: String,
             value: '',
             notify: true,
             observer: '_valueChanged'
@@ -259,18 +284,17 @@ A major feature is that it will evaluate the code instantly and show the result.
            * Result from the last evaluation.
            */
           result: {
-            type: 'String',
+            type: String,
             value: '',
             notify: true,
           },
 
           /**
-           * Value of console.log statements.
+           * Array of console.log statements executed in the worker.
            */
-          consoleTxt: {
-            type: 'String',
-            value: '',
-            notify: true,
+          _consoleEntries: {
+            type: Array,
+            notify: true
           },
 
           /**
@@ -318,16 +342,6 @@ A major feature is that it will evaluate the code instantly and show the result.
           return submission;
         },
 
-        // evalInput: function (expr) {
-        //   var result;
-        //   try {
-        //     result = eval(expr);
-        //   } catch (err) {
-        //     result = err.toString();
-        //   }
-        //   return JSON.stringify(result, undefined, 2);
-        // },
-
         _update: function () {
           var submission = this._getSubmittedCode();
 
@@ -339,22 +353,22 @@ A major feature is that it will evaluate the code instantly and show the result.
           // start with a new worker
           this._killWorker(this.worker);
           this.worker = new Worker(this.resolveUrl("../evalWorker.js"));
-          this.result = this.consoleTxt = '';
+          this.result = '';
+          this._consoleEntries = [];
 
           // kill worker after 10 seconds no matter what
           var id = setTimeout(function(){
            this._killWorker(this.worker);
           }.bind(this), 10000);
 
-          this.worker.onmessage = function(e) {
-            clearTimeout(id);
-            this._killWorker(this.worker);
-            
+          this.worker.onmessage = function(e) {            
             if(e.data.type =="result"){
+              clearTimeout(id);
+              this._killWorker(this.worker);
               this.result = e.data.value;
             }
             if(e.data.type== "console"){
-              this.consoleTxt = e.data.value;
+              this._consoleEntries = e.data.value;
             }
           }.bind(this);
 
@@ -400,8 +414,8 @@ A major feature is that it will evaluate the code instantly and show the result.
 
         ready: function () {
 
-          // scan for code changes every 300ms
-          this.interval = 300;
+          // scan for code changes every 500ms
+          this.interval = 500;
           this.timer;
         },
 

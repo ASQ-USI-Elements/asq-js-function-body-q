@@ -1,20 +1,21 @@
 // original author Carlos Vadillo (Github: @cvadillo)
 // copied from https://github.com/cvadillo/js-object-pretty-print
 
+var oldConsole = console;
+
+var consoleStr = [];
 var window = {};
-window.alert = function(){
-  console.log.apply(console, ["Alert: "].concat(Array.prototype.slice.call(arguments)));
-};
+
 var alert = window.alert;
 var console = {
   log: function(){
-    var str = "";
+    var str = ''
     for(var i = 0; i < arguments.length; i++){
       str += JSON.stringify(arguments[i]) + " ";
     }
-    str += "\n";
+    consoleStr.push(str)
     // send the message back to the main thread
-    self.postMessage({type: "console", value: str});
+    self.postMessage({type: "console", value: consoleStr});
   },
   error: function(){
     console.log.apply(console, ["ERROR: "].concat(Array.prototype.slice.call(arguments)));
@@ -22,6 +23,10 @@ var console = {
   warn: function(){
     console.log.apply(console, ["WARNING: "].concat(Array.prototype.slice.call(arguments)));
   }
+};
+
+window.alert = function(){
+  console.log.apply(console, ["Alert: "].concat(Array.prototype.slice.call(arguments)));
 };
 
 var pretty = function (jsObject, indentLength, outputTo, fullFunction) {
