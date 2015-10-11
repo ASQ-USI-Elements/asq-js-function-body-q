@@ -3,7 +3,6 @@
 
 <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../iron-list/iron-list.html">
-<link rel="import" href="../../iron-pages/iron-pages.html">
 <link rel="import" href="../../paper-input/paper-textarea.html">
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-tabs/paper-tab.html">
@@ -11,25 +10,25 @@
 <link rel="import" href="../../paper-styles/color.html">
 
 <!--
-`asq-js-function-body-presenter-q` is the presenter element for `asq-js-function-body-q` 
+`asq-js-function-body-q-presenter` is the presenter element for `asq-js-function-body-q` 
 
 A major feature is that it will evaluate the code instantly and show the result.
 
 ##### Example
-      <asq-js-function-body-presenter-q function-name="wrap(str, tagName)" 
+      <asq-js-function-body-q-presenter function-name="wrap(str, tagName)" 
           test-exp="wrap('hello World', 'div');">
         <asq-stem><h4>Implement a function that wraps a given 
             string with an HTML tag:</h4></asq-stem>
-      </asq-js-function-body-presenter-q>
+      </asq-js-function-body-q-presenter>
 
 
-@element asq-js-function-body-presenter-q
+@element asq-js-function-body-q-presenter
 @demo demo/index.html
 @group ASQ Elements
 @blurb Element presenter element for `asq-js-function-body-q`.
 @homepage http://github.com/ASQ-USI-Elements/asq-js-function-body-q
 -->
-<dom-module id="asq-js-function-body-presenter-q">
+<dom-module id="asq-js-function-body-q-presenter">
 
   <template>
 
@@ -298,7 +297,7 @@ A major feature is that it will evaluate the code instantly and show the result.
   <script>
     (function () {
       Polymer({
-        is: 'asq-js-function-body-presenter-q',
+        is: 'asq-js-function-body-q-presenter',
 
         behaviors: [ASQ.asqQuestionElementBehavior],
 

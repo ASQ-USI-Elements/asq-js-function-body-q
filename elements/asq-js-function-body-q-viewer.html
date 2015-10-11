@@ -4,25 +4,25 @@
 <link rel="import" href="../../asq-base/asq-base.html">
 
 <!--
-`asq-js-function-body-viewer-q` is the viewer element for `asq-js-function-body-q` 
+`asq-js-function-body-q-viewer` is the viewer element for `asq-js-function-body-q` 
 
 A major feature is that it will evaluate the code instantly and show the result.
 
 ##### Example
-      <asq-js-function-body-viewer-q function-name="wrap(str, tagName)" 
+      <asq-js-function-body-q-viewer function-name="wrap(str, tagName)" 
           test-exp="wrap('hello World', 'div');">
         <asq-stem><h4>Implement a function that wraps a given 
             string with an HTML tag:</h4></asq-stem>
-      </asq-js-function-body-viewer-q>
+      </asq-js-function-body-q-viewer>
 
 
-@element asq-js-function-body-viewer-q
+@element asq-js-function-body-q-viewer
 @demo demo/index.html
 @group ASQ Elements
 @blurb Element viewer element for `asq-js-function-body-q`.
 @homepage http://github.com/ASQ-USI-Elements/asq-js-function-body-q
 -->
-<dom-module id="asq-js-function-body-viewer-q">
+<dom-module id="asq-js-function-body-q-viewer">
 
   <template>
 
@@ -238,7 +238,7 @@ A major feature is that it will evaluate the code instantly and show the result.
   <script>
     (function () {
       Polymer({
-        is: 'asq-js-function-body-viewer-q',
+        is: 'asq-js-function-body-q-viewer',
 
         behaviors: [ASQ.asqQuestionElementBehavior],
 

@@ -1,8 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../asq-base/asq-base.html">
 
-<link rel="import" href="elements/asq-js-function-body-presenter-q.html">
-<link rel="import" href="elements/asq-js-function-body-viewer-q.html">
+<link rel="import" href="elements/asq-js-function-body-q-presenter.html">
+<link rel="import" href="elements/asq-js-function-body-q-viewer.html">
 
 <!--
 `asq-js-function-body-q` is an element that is designed for learning writing javascript
@@ -29,16 +29,16 @@ A major feature is that it will evaluate the code instantly and show the result.
   <template>
      <!-- Viewer -->
      <template is="dom-if" if="{{hasRole(role, roles.VIEWER)}}" restamp>
-       <asq-js-function-body-viewer-q role="viewer" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
+       <asq-js-function-body-q-viewer role="viewer" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
          <content></content>
-       </asq-js-function-body-viewer-q>
+       </asq-js-function-body-q-viewer>
      </template>
      
      <!-- Presenter -->
     <template is="dom-if" if="{{hasRole(role, roles.PRESENTER)}}" restamp>
-       <asq-js-function-body-presenter-q role="presenter" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
+       <asq-js-function-body-q-presenter role="presenter" uid="[[uid]]" test-exp="{{testExp}}" function-name="{{functionName}}" event-bus="[[eventBus]]" value="{{value}}">
          <content></content>
-       </asq-js-function-body-presenter-q>
+       </asq-js-function-body-q-presenter>
      </template>
   </template>
 
@@ -115,9 +115,9 @@ A major feature is that it will evaluate the code instantly and show the result.
          */
         submit: function () {
           if (this.role == this.roles.VIEWER) {
-            var el = this.$$('asq-js-function-body-viewer-q');
+            var el = this.$$('asq-js-function-body-q-viewer');
             if (!el) {
-              throw new Error('submit(): expected asq-js-function-body-viewer-q element to exist');
+              throw new Error('submit(): expected asq-js-function-body-q-viewer element to exist');
             }
             return el.submit();
           }
