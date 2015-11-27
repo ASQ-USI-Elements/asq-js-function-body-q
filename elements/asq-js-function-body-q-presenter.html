@@ -63,6 +63,23 @@ A major feature is that it will evaluate the code instantly and show the result.
       @apply(--asq-js-function-body-q-header);
      }
 
+     #textareaContainer{
+      @apply(--layout-horizontal);
+      box-sizing:border-box;
+      padding: 4px 8px;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+      margin: 5px 0;
+     }
+      
+    #taLineNumContainer{
+      text-align :right;
+      padding : 8px;
+      border-right :1px solid rgba(255,255,255, 0.3);
+    }
+
      #list-container{
       @apply(--layout-flex);
       @apply(--layout-vertical);
@@ -159,15 +176,10 @@ A major feature is that it will evaluate the code instantly and show the result.
         box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
       }
 
-      .asq-code-input{
+      #code{
         @apply(--asq-js-function-body-q-code-input);
-        box-sizing:border-box;
-        padding: 4px 8px;
-        border: 1px dashed #ccc;
-        border-radius: 4px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-        margin: 5px 0;
+        @apply(--layout-flex);
+        margin-left: 8px;
       }
 
       pre.asq-evaluate{
@@ -242,9 +254,10 @@ A major feature is that it will evaluate the code instantly and show the result.
       <div id="editor">
         <div id="function-container">
           <code><span id="header" class="asq-code-header">function <span>{{ functionName }}</span>{</span>
-            <div style="padding-left: 10px;">
-            <paper-textarea id="code" class="asq-code-input" on-keydown="onTextareaKeydown" no-label-float  label="enter your code here" value="{{value}}" disabled="{{disabled}}"></paper-textarea>
-          </div>
+            <div id="textareaContainer">
+              <div id="taLineNumContainer"></div>
+              <paper-textarea id="code" class="asq-code-input" on-keydown="onTextareaKeydown" no-label-float  label="enter your code here" value="{{value}}" disabled="{{disabled}}"></paper-textarea>
+            </div>
           <span id="footer" class="asq-code-footer">}</span>
           </code>
         </div>
@@ -296,6 +309,43 @@ A major feature is that it will evaluate the code instantly and show the result.
 
   <script>
     (function () {
+
+      // from http://stackoverflow.com/questions/1760629/how-to-get-number-of-rows-in-textarea/1761203#1761203
+      var calculateContentHeight = function( ta, scanAmount ) {
+        var origHeight = ta.style.height,
+          height = ta.offsetHeight,
+          scrollHeight = ta.scrollHeight,
+          overflow = ta.style.overflow;
+        /// only bother if the ta is bigger than content
+        if ( height >= scrollHeight ) {
+          /// check that our browser supports changing dimension
+          /// calculations mid-way through a function call...
+          ta.style.height = (height + scanAmount) + 'px';
+          /// because the scrollbar can cause calculation problems
+          ta.style.overflow = 'hidden';
+          /// by checking that scrollHeight has updated
+          if ( scrollHeight < ta.scrollHeight ) {
+            /// now try and scan the ta's height downwards
+            /// until scrollHeight becomes larger than height
+            while (ta.offsetHeight >= ta.scrollHeight) {
+              ta.style.height = (height -= scanAmount)+'px';
+            }
+            /// be more specific to get the exact height
+            while (ta.offsetHeight < ta.scrollHeight) {
+              ta.style.height = (height++)+'px';
+            }
+            /// reset the ta back to it's original height
+            ta.style.height = origHeight;
+            /// put the overflow back
+            ta.style.overflow = overflow;
+            return height;
+          }
+        } else {
+          return scrollHeight;
+        }
+      }
+
+
       Polymer({
         is: 'asq-js-function-body-q-presenter',
 
@@ -372,6 +422,25 @@ A major feature is that it will evaluate the code instantly and show the result.
             observer: "_eventBusChanged",
             notify: true
           }
+        },
+
+        observers: [" __drawLineNums__(value, taLineNumContainer)"],
+
+        attached: function(){
+          // get a reference to the raw text area to use it for line height calculations
+          var c = Polymer.dom(this.$.code.root).querySelector('paper-input-container');
+          var i = Polymer.dom(c).querySelector("#input")
+          this.codeTextArea = i.$.textarea;
+
+          // need this to activate the __drawLineNums__ observer
+          this.taLineNumContainer = this.$.taLineNumContainer;
+
+           // copy CSS properties of interest
+          ["lineHeight", 'fontWeight', "fontFamily"].forEach(function(prop){
+            // lowercase Prop
+            lProp = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+            this.taLineNumContainer.style[prop] =  window.getComputedStyle(this.codeTextArea, null)[lProp];
+          }.bind(this));
         },
 
         onTextareaKeydown: function(event, detail){
@@ -495,6 +564,41 @@ A major feature is that it will evaluate the code instantly and show the result.
 
         indexPlusOne: function(index){
           return ++index;
+        },
+
+        __drawLineNums__: function(value, taLineNumContainer){
+
+          clearTimeout(this.drawLinesTimeout);
+
+          this.drawLinesTimeout = setTimeout(function(){
+            var lines = this.__calculateLineNumber__();
+
+            // do not redraw if there's no change in lines
+            if(this.taLines == lines) return;
+            var html = "";
+            for (var i=0; i<lines; i){
+              html += (++i) + '<br/>';
+            }
+            taLineNumContainer.innerHTML = html;
+          }.bind(this), 50)
+        },
+
+        __calculateLineNumber__ : function() {
+           if(! this.codeTextArea) return;
+
+            var ta = this.codeTextArea,
+                style = (window.getComputedStyle) ?
+                    window.getComputedStyle(ta) : ta.currentStyle,
+
+                // This will get the line-height only if it is set in the css,
+                // otherwise it's "normal"
+                taLineHeight = parseInt(style.lineHeight, 10),
+                // Get the scroll height of the textarea
+                taHeight = calculateContentHeight(ta, taLineHeight),
+                // calculate the number of lines
+                numberOfLines = Math.ceil(taHeight / taLineHeight) - 1;
+
+            return numberOfLines;
         }
       });
     }());
