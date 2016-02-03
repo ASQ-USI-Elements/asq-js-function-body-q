@@ -14,13 +14,13 @@
   "dependencies": {
     "asq-base": "ASQ-USI-Elements/asq-base#master",
     "asq-stem": "ASQ-USI-Elements/asq-stem#master",
-    "iron-list": "polymerelements/iron-list#~1.1.5",
-    "iron-flex-layout": "PolymerElements/iron-flex-layout#~1.0.5",
-    "paper-input": "PolymerElements/paper-input#~1.0.18",
-    "paper-item": "polymerelements/paper-item#~1.0.7",
-    "paper-tabs": "polymerelements/paper-tabs#~1.0.10",
-    "polymer": "polymer/polymer#~1.2.1",
-    "paper-styles": "PolymerElements/paper-styles#~1.0.12"
+    "iron-list": "polymerelements/iron-list#^1.1.5",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.5",
+    "paper-input": "PolymerElements/paper-input#^1.0.18",
+    "paper-item": "polymerelements/paper-item#^1.0.7",
+    "paper-tabs": "polymerelements/paper-tabs#^1.0.10",
+    "polymer": "polymer/polymer#^1.2.1",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.12"
   },
   "ignore": [
     "index.js",
@@ -31,7 +31,7 @@
     "test/server"
   ],
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~1.0.9",
-    "web-component-tester": "Polymer/web-component-tester#~3.3.29"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.1.4",
+    "web-component-tester": "Polymer/web-component-tester#^4.2.0"
   }
 }
