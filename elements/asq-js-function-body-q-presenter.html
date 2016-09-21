@@ -489,7 +489,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         toggleSubmissionList: function(evt, detail){
           var current = this.$.submissionListWrapper.style.display;
           this.$.submissionListWrapper.style.display = (current == 'flex') ? 'none': 'flex';
-          this.$.submissionList._update();
+          this.$.submissionList.notifyResize();
         },
 
        _update: function () {
