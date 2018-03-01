@@ -363,7 +363,7 @@ A major feature is that it will evaluate the code instantly and show the result.
         attached: function(){
           // get a reference to the raw text area to use it for line height calculations
           var c = Polymer.dom(this.$.code.root).querySelector('paper-input-container');
-          var i = Polymer.dom(c).querySelector("#input")
+          var i = Polymer.dom(c).querySelector("iron-autogrow-textarea");
           this.codeTextArea = i.$.textarea;
 
           // need this to activate the __drawLineNums__ observer
